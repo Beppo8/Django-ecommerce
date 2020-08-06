@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'categories',
     'shipping_addresses',
     'promo_codes',
+    'billing_profiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -127,6 +128,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = 'beppo2488@gmail.com'
 EMAIL_HOST_PASSWORD = 'ewad8dis'
 EMAIL_USE_TLS = True
+
+STRIPE_PUBLIC_KEY = 'pk_test_51HCztnIM83CUYyhydpwnjD1xMbc2qHwZjYXXzQQVSR8kPj9pf5fwO5xmlmWIxVAEqhM58IZYXaJViq24ohnRCpIF00JI59jIgw'
+STRIPE_PRIVATE_KEY = 'sk_test_51HCztnIM83CUYyhym6eb7zFVzGUEanVHhpoLdIolXTLjNYTxyWQJzXOpjIyyr5yYFF1PUucuEgDP7yOX25fed53A00n0TZtACi'
 
 
 # Static files (CSS, JavaScript, Images)
