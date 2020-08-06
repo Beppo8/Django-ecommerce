@@ -3,8 +3,9 @@ import threading
 from django.contrib import messages
 
 from django.shortcuts import render, redirect
-
 from django.shortcuts import get_object_or_404
+
+from django.db import transaction
 
 from carts.utils import get_or_create_cart
 from carts.utils import destroy_cart
@@ -15,6 +16,7 @@ from .utils import get_or_create_order, breadcrumb
 from .mails import Mail
 
 from .models import Order
+from charges.models import Charge
 from shipping_addresses.models import ShippingAddress
 
 from django.contrib.auth.decorators import login_required
@@ -138,15 +140,19 @@ def complete(request, cart, order):
     if request.user.id != order.user_id:
         return redirect('carts:cart')
 
-    order.complete()
+    charge = Charge.objects.create_charge(order)
+    if charge:
+        with transaction.atomic():
+            order.complete()
+        
+            thread = threading.Thread(target=Mail.send_complete_order, args=(
+                order, request.user
+            ))
+            thread.start()
 
-    thread = threading.Thread(target=Mail.send_complete_order, args=(
-        order, request.user
-    ))
-    thread.start()
+            destroy_cart(request)
+            destroy_order(request)
 
-    destroy_cart(request)
-    destroy_order(request)
-
-    messages.success(request, 'Compra completada exitosamente')
+            messages.success(request, 'Compra completada exitosamente')
+        
     return redirect('index')
